@@ -1,8 +1,3 @@
-async function loadPartial(id, file) {
-  const res = await fetch(`partials/${file}`);
-  document.getElementById(id).innerHTML = await res.text();
-}
-
 async function loadContent() {
   const lang = localStorage.getItem('lang') || 'ru';
   const data = await fetch(`content/${lang}.json`).then(r => r.json());
@@ -25,14 +20,6 @@ async function loadContent() {
     });
   }
 }
-
-(async () => {
-  await loadPartial('header', 'header.html');
-  await loadPartial('footer', 'footer.html');
-  await loadContent();
-  setActiveNav();
-  updateLangLabel();
-})();
 
   function setActiveNav() {
   const current = location.pathname.split('/').pop() || 'index.html';
