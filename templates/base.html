@@ -1,19 +1,25 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Personal Site{% endblock %}</title>
+
     <link rel="stylesheet" href="/static/css/base.css">
-    <script src="/static/js/theme.js"></script>
-    <title>{{ title }}</title>
+    <link rel="stylesheet" href="/static/css/layout.css">
 </head>
 <body>
-    <header>
-        <h1>{{ title }}</h1>
-        <hr>
-    </header>
+
+    {% include "partials/header.html" %}
 
     <main>
-        {% block content %}{% endblock %}
+        {% block content %}
+        {% endblock %}
     </main>
+
+    {% include "partials/footer.html" %}
+
+    <script src="/static/js/theme.js"></script>
 </body>
 </html>
+

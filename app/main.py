@@ -18,10 +18,6 @@ templates = Jinja2Templates(directory="templates")
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
-@app.get("/")
-async def root() -> dict[str, str]:
-    return {"status": "ok"}
-
 @app.get("/{slug}")
 def render_page(slug: str, request: Request):
 
@@ -39,4 +35,11 @@ def render_page(slug: str, request: Request):
             "title": page.title,
             "content": page.content,
         }
+    )
+
+@app.get("/")
+def index(request: Request):
+    return templates.TemplateResponse(
+        "index.html",
+        {"request": request}
     )
