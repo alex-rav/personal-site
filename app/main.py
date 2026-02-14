@@ -1,11 +1,12 @@
 from fastapi import FastAPI
-from app.database import engine
-from app.models import Base
-from app.routers import pages
-from fastapi.templating import Jinja2Templates
 from fastapi import Request
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
+from app.database import engine
 from app.database import SessionLocal
+from app.models import Base
 from app.models import Page
+from app.routers import pages
 
 Base.metadata.create_all(bind=engine)
 
@@ -14,6 +15,8 @@ app = FastAPI(title="Personal Site")
 app.include_router(pages.router)
 
 templates = Jinja2Templates(directory="templates")
+
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 @app.get("/")
 async def root() -> dict[str, str]:

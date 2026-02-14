@@ -1,0 +1,12 @@
+:root {
+  --bg: #0f1115;
+  --text: #eaeaea;
+  --card: #161a22;
+
+  --border: #222;
+  --text-muted: #9aa0a6;
+  --icon: #eaeaea;
+
+  --nav-hover-bg: rgba(255, 255, 255, 0.08);
+  --nav-active-bg: rgba(255, 255, 255, 0.14);
+}
