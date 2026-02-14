@@ -45,7 +45,7 @@ def about(request: Request):
         "about.html",
         {"request": request}
     )
-
+"""
 @app.get("/{slug}")
 def render_page(slug: str, request: Request):
 
@@ -64,3 +64,4 @@ def render_page(slug: str, request: Request):
             "content": page.content,
         }
     )
+"""
