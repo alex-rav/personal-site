@@ -4,7 +4,7 @@
   if (!id) return;
 
   const lang = localStorage.getItem('lang') || 'ru';
-  const data = await fetch(`content/${lang}.json`).then(r => r.json());
+  const data = await fetch(`static/content/${lang}.json`).then(r => r.json());
   const project = data.projects.find(p => p.id === id);
   if (!project) return;
 

@@ -1,0 +1,25 @@
+{
+  "hero_title": "Автоматизация & IT Engineer",
+  "hero_subtitle": "PLC, backend, frontend, industrial systems",
+  "projects_title": "Проекты",
+  "projects": [
+  {
+    "id": "plc-monitoring",
+    "title": "PLC Monitoring",
+    "desc": "Система мониторинга промышленного оборудования",
+    "details": "Сбор данных с ПЛК, визуализация, алерты, логирование",
+    "stack": "PLC, TIA Portal, Node.js"
+  },
+  {
+    "id": "telegram-bot",
+    "title": "Telegram Bot",
+    "desc": "Бот для управления производственными сменами",
+    "details": "Уведомления, роли, история событий",
+    "stack": "Node.js, Telegram API"
+  }
+],
+"about_title": "Обо мне",
+"about_intro": "Инженер автоматизации с практическим опытом в PLC, IT и промышленных системах.",
+"about_skills_title": "Ключевые навыки"
+}
+

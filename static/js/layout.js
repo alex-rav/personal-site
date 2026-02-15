@@ -1,6 +1,8 @@
 async function loadContent() {
   const lang = localStorage.getItem('lang') || 'ru';
-  const data = await fetch(`content/${lang}.json`).then(r => r.json());
+
+  const response = await fetch(`/static/content/${lang}.json`);
+  const data = await response.json();
 
   document.querySelectorAll('[data-key]').forEach(el => {
     const key = el.dataset.key;
@@ -21,12 +23,11 @@ async function loadContent() {
   }
 }
 
-  function setActiveNav() {
+function setActiveNav() {
   const current = location.pathname.split('/').pop() || 'index.html';
 
   document.querySelectorAll('nav a').forEach(link => {
-    const href = link.getAttribute('href');
-    if (href === current) {
+    if (link.getAttribute('href') === current) {
       link.classList.add('active');
     }
   });
@@ -44,3 +45,7 @@ function updateLangLabel() {
   const label = document.getElementById('lang-label');
   if (label) label.textContent = lang.toUpperCase();
 }
+
+updateLangLabel();
+loadContent();
+setActiveNav();

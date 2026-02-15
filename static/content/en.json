@@ -1,0 +1,24 @@
+{
+  "hero_title": "Automation & IT Engineer",
+  "hero_subtitle": "PLC, backend, frontend, industrial systems",
+  "projects_title": "Projects",
+  "projects": [
+  {
+    "id": "plc-monitoring",
+    "title": "PLC Monitoring",
+    "desc": "Industrial equipment monitoring system",
+    "details": "PLC data collection, dashboards, alerts, logging",
+    "stack": "PLC, TIA Portal, Node.js"
+  },
+  {
+    "id": "telegram-bot",
+    "title": "Telegram Bot",
+    "desc": "Shift management bot",
+    "details": "Notifications, roles, event history",
+    "stack": "Node.js, Telegram API"
+  }
+],
+"about_title": "About me",
+"about_intro": "Automation engineer with hands-on experience in PLC, IT and industrial systems.",
+"about_skills_title": "Key skills"
+}

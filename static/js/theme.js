@@ -6,7 +6,7 @@ function applyTheme(theme) {
   if (!link) return;
 
   // cache-busting, иначе Firefox делает вид что ничего не менялось
-  link.href = `css/${theme}.css?v=${Date.now()}`;
+  link.href = `static/css/${theme}.css?v=${Date.now()}`;
 }
 
 function toggleTheme() {
