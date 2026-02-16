@@ -1,6 +1,7 @@
 services:
   web:
-    build: .
+    build:
+      context: .
     container_name: personal_site_web
     ports:
       - "8000:8000"
@@ -8,6 +9,8 @@ services:
       - db
     env_file:
       - .env
+    volumes:
+      - .:/app
 
   db:
     image: postgres:15
