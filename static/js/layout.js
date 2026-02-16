@@ -24,14 +24,19 @@ async function loadContent() {
 }
 
 function setActiveNav() {
-  const current = location.pathname.split('/').pop() || 'index.html';
+  const currentPath = window.location.pathname.replace(/\/$/, '');
 
   document.querySelectorAll('nav a').forEach(link => {
-    if (link.getAttribute('href') === current) {
+    const linkPath = new URL(link.href).pathname.replace(/\/$/, '');
+
+    if (linkPath === currentPath) {
       link.classList.add('active');
     }
   });
 }
+
+document.addEventListener('DOMContentLoaded', setActiveNav);
+
 
 window.toggleLang = () => {
   const current = localStorage.getItem('lang') || 'ru';
