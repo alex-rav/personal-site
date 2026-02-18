@@ -1,13 +1,31 @@
 async function loadContent() {
   const lang = localStorage.getItem('lang') || 'ru';
 
-  const response = await fetch(`/static/content/${lang}.json`);
+  const response = await fetch(`/static/content/${lang}.json?v=1`);
   const data = await response.json();
 
   document.querySelectorAll('[data-key]').forEach(el => {
     const key = el.dataset.key;
     if (data[key]) el.textContent = data[key];
   });
+  
+  renderList('skills_backend', data.skills_backend);
+  renderList('skills_frontend', data.skills_frontend);
+  renderList('skills_infrastructure', data.skills_infrastructure);
+  renderList('skills_industrial', data.skills_industrial);
+  renderList('about_highlights', data.about_highlights);
+ 
+  function renderList(id, items) {
+    const container = document.getElementById(id);
+    if (!container || !items) return;
+
+    container.innerHTML = '';
+    items.forEach(item => {
+      const li = document.createElement('li');
+      li.textContent = item;
+      container.appendChild(li);
+    });
+  }
 
   const projects = document.getElementById('projects');
   if (projects && data.projects) {

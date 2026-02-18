@@ -1,24 +1,63 @@
 {
-  "hero_title": "Automation & IT Engineer",
-  "hero_subtitle": "PLC, backend, frontend, industrial systems",
+  "hero_title": "Full-Stack Web Developer & Automation Engineer",
+  "hero_subtitle": "I design and build reliable web systems and production automation solutions — from backend architecture to industrial control integration.",
   "projects_title": "Projects",
+  "hero_desc_title": "Short intro block",
+  "hero_description": "I work at the intersection of software engineering and industrial automation. My focus is building scalable web applications and integrating them with real-world production systems. I value clean architecture, predictable system behavior, and solutions that remain maintainable under growth.",
   "projects": [
-  {
-    "id": "plc-monitoring",
-    "title": "PLC Monitoring",
-    "desc": "Industrial equipment monitoring system",
-    "details": "PLC data collection, dashboards, alerts, logging",
-    "stack": "PLC, TIA Portal, Node.js"
-  },
-  {
-    "id": "telegram-bot",
-    "title": "Telegram Bot",
-    "desc": "Shift management bot",
-    "details": "Notifications, roles, event history",
-    "stack": "Node.js, Telegram API"
-  }
-],
-"about_title": "About me",
-"about_intro": "Automation engineer with hands-on experience in PLC, IT and industrial systems.",
-"about_skills_title": "Key skills"
+    {
+      "id": "plc-monitoring",
+      "title": "PLC Monitoring",
+      "desc": "Industrial equipment monitoring system",
+      "details": "PLC data collection, dashboards, alerts, logging",
+      "stack": "PLC, TIA Portal, Node.js"
+    },
+    {
+      "id": "telegram-bot",
+      "title": "Telegram Bot",
+      "desc": "Shift management bot",
+      "details": "Notifications, roles, event history",
+      "stack": "Node.js, Telegram API"
+    }
+  ],
+  "about_title": "About me",
+  "about_intro": "Automation engineer with hands-on experience in PLC, IT and industrial systems.",
+  "about_skills_title": "Key skills",
+  "skills_backend_title": "Backend",
+  "skills_backend": [
+    "• Python",
+    "• FastAPI",
+    "• SQLAlchemy",
+    "• PostgreSQL"
+  ],
+  "skills_frontend_title": "Frontend",
+  "skills_frontend": [
+    "• HTML / CSS",
+    "• JavaScript",
+    "• Responsive layout principles"
+  ],
+  "skills_infrastructure_title": "Infrastructure",
+  "skills_infrastructure": [
+    "• Docker",
+    "• Linux",
+    "• Git",
+    "• Nginx (basic configuration)"
+  ],
+  "skills_industrial_title": "Industrial Automation",
+  "skills_industrial": [
+    "• PLC integration",
+    "• SCADA systems",
+    "• Production process monitoring"
+  ],
+  "about_title": "About Me",
+  "about_intro": "I am a full-stack engineer with a strong backend focus, working primarily with Python and modern web technologies.",
+  "about_highlights": [
+    "REST API design and implementation",
+    "Database architecture and optimization",
+    "Containerized environments (Docker)",
+    "Integration of web systems with industrial control environments"
+  ],
+  "about_background": "With a background in automation engineering, I understand how software interacts with physical processes. This allows me to design systems that are not only functional but also reliable in real production conditions.",
+  "about_growth": "I continuously improve my skills in scalable system design and infrastructure automation."
 }
+
