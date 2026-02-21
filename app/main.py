@@ -10,7 +10,7 @@ from starlette import status
 from starlette.middleware.sessions import SessionMiddleware
 
 from app.auth import verify_password
-from app.database import get_db
+from app.database import Base, engine, get_db
 from app.models import Message, Review, User
 
 SECRET_KEY = os.getenv('SECRET_KEY')
@@ -22,6 +22,12 @@ templates = Jinja2Templates(directory='templates')
 
 app.mount('/static', StaticFiles(directory='static'), name='static')
 app.add_middleware(SessionMiddleware, secret_key=SECRET_KEY)
+
+
+@app.on_event('startup')
+def ensure_tables_exist():
+    # Безопасный fallback: если миграции не запускались, создаем базовые таблицы.
+    Base.metadata.create_all(bind=engine)
 
 
 @app.get('/', name='index')
@@ -121,7 +127,7 @@ def send_message(
 def admin_login_page(request: Request):
     return templates.TemplateResponse(
         'admin_login.html',
-        {'request': request, 'error': request.query_params.get('error') == '1'},
+        {'request': request, 'error': request.query_params.get('error') == '1', 'db_error': request.query_params.get('db_error') == '1'},
     )
 
 
@@ -132,7 +138,10 @@ def login(
     password: str = Form(...),
     db: Session = Depends(get_db),
 ):
-    user = db.query(User).filter(User.username == username).first()
+    try:
+        user = db.query(User).filter(User.username == username).first()
+    except SQLAlchemyError:
+        return RedirectResponse('/admin/login?db_error=1', status_code=status.HTTP_303_SEE_OTHER)
 
     if not user or not verify_password(password, user.hashed_password):
         return RedirectResponse('/admin/login?error=1', status_code=status.HTTP_303_SEE_OTHER)
@@ -152,7 +161,11 @@ def get_current_user(request: Request, db: Session = Depends(get_db)):
     if not user_id:
         raise HTTPException(status_code=401)
 
-    user = db.get(User, user_id)
+    try:
+        user = db.get(User, user_id)
+    except SQLAlchemyError:
+        raise HTTPException(status_code=503, detail='Database unavailable')
+
     if not user:
         raise HTTPException(status_code=401)
 
@@ -168,8 +181,12 @@ def admin_dashboard(
     if not user.is_admin:
         raise HTTPException(status_code=403)
 
-    pending_reviews = db.query(Review).filter(Review.status == 'pending').order_by(Review.created_at.desc()).all()
-    all_messages = db.query(Message).order_by(Message.created_at.desc()).all()
+    try:
+        pending_reviews = db.query(Review).filter(Review.status == 'pending').order_by(Review.created_at.desc()).all()
+        all_messages = db.query(Message).order_by(Message.created_at.desc()).all()
+    except SQLAlchemyError:
+        pending_reviews = []
+        all_messages = []
 
     return templates.TemplateResponse(
         'admin.html',
