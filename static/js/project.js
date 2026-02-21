@@ -1,10 +1,10 @@
 (async () => {
-  const params = new URLSearchParams(location.search);
-  const id = params.get('id');
+  const pathParts = location.pathname.split('/').filter(Boolean);
+  const id = pathParts[pathParts.length - 1];
   if (!id) return;
 
   const lang = localStorage.getItem('lang') || 'ru';
-  const data = await fetch(`static/content/${lang}.json`).then(r => r.json());
+  const data = await fetch(`/static/content/${lang}.json`).then(r => r.json());
   const project = data.projects.find(p => p.id === id);
   if (!project) return;
 
