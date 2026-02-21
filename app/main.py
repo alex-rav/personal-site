@@ -45,7 +45,18 @@ def project_details(request: Request, project_id: str):
 
 
 @app.get('/about', name='about')
-def about(request: Request, db: Session = Depends(get_db)):
+def about(request: Request):
+    return templates.TemplateResponse(
+        'about.html',
+        {
+            'request': request,
+            'message_sent': request.query_params.get('message_sent') == '1',
+        },
+    )
+
+
+@app.get('/reviews', name='reviews_page')
+def reviews_page(request: Request, db: Session = Depends(get_db)):
     approved_reviews = []
     try:
         approved_reviews = (
@@ -55,16 +66,14 @@ def about(request: Request, db: Session = Depends(get_db)):
             .all()
         )
     except SQLAlchemyError:
-        # Позволяем странице открыться даже если миграции еще не применены.
         approved_reviews = []
 
     return templates.TemplateResponse(
-        'about.html',
+        'reviews.html',
         {
             'request': request,
             'approved_reviews': approved_reviews,
             'review_sent': request.query_params.get('review_sent') == '1',
-            'message_sent': request.query_params.get('message_sent') == '1',
         },
     )
 
@@ -82,7 +91,7 @@ def submit_review(
     db.add(Review(author_name=author_name.strip(), text=text.strip(), rating=rating, status='pending'))
     db.commit()
 
-    return RedirectResponse(url='/about?review_sent=1', status_code=status.HTTP_303_SEE_OTHER)
+    return RedirectResponse(url='/reviews?review_sent=1', status_code=status.HTTP_303_SEE_OTHER)
 
 
 @app.post('/messages', name='send_message')

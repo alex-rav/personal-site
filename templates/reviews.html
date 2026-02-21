@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}Reviews{% endblock %}
+
+{% block content %}
+<main class="container">
+  <section class="card section-block">
+    <h2>Отзывы</h2>
+    {% if review_sent %}
+      <p class="notice">Спасибо! Отзыв отправлен на модерацию.</p>
+    {% endif %}
+
+    {% if approved_reviews %}
+      <div class="review-list">
+        {% for review in approved_reviews %}
+          <article class="review-item">
+            <strong>{{ review.author_name }}</strong>
+            <span class="rating-view" style="--rating: {{ review.rating }}">★★★★★</span>
+            <p>{{ review.text }}</p>
+          </article>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p>Пока нет опубликованных отзывов.</p>
+    {% endif %}
+  </section>
+
+  <section class="card section-block">
+    <h3>Оставить отзыв</h3>
+    <form action="{{ url_for('submit_review') }}" method="post" class="form-block">
+      <label>
+        Имя
+        <input type="text" name="author_name" required>
+      </label>
+
+      <div>
+        <p>Оценка</p>
+        <div class="rating-input" role="radiogroup" aria-label="Оценка от 1 до 5">
+          <input type="radio" id="star5" name="rating" value="5" required>
+          <label for="star5" title="5">★</label>
+          <input type="radio" id="star4" name="rating" value="4">
+          <label for="star4" title="4">★</label>
+          <input type="radio" id="star3" name="rating" value="3">
+          <label for="star3" title="3">★</label>
+          <input type="radio" id="star2" name="rating" value="2">
+          <label for="star2" title="2">★</label>
+          <input type="radio" id="star1" name="rating" value="1">
+          <label for="star1" title="1">★</label>
+        </div>
+      </div>
+
+      <label>
+        Отзыв
+        <textarea name="text" rows="4" required></textarea>
+      </label>
+      <button type="submit">Отправить отзыв</button>
+    </form>
+  </section>
+</main>
+{% endblock %}
