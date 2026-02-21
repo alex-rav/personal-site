@@ -226,3 +226,71 @@ nav a.active::after {
   border-radius: 5px;
 }
 
+
+.section-block {
+  margin-top: 2rem;
+}
+
+.form-block {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.form-block label {
+  display: grid;
+  gap: 0.35rem;
+  font-size: 0.95rem;
+}
+
+.form-block input,
+.form-block textarea,
+.form-block button,
+.inline-form button,
+button {
+  font: inherit;
+}
+
+.form-block input,
+.form-block textarea {
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.65rem 0.75rem;
+}
+
+button {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--card);
+  color: var(--text);
+  padding: 0.6rem 0.9rem;
+  cursor: pointer;
+}
+
+.review-list {
+  display: grid;
+  gap: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+.review-item {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.8rem;
+}
+
+.notice {
+  border: 1px solid var(--accent);
+  border-radius: 8px;
+  padding: 0.6rem;
+}
+
+.notice.error {
+  border-color: #ff6b6b;
+}
+
+.inline-form {
+  display: flex;
+  gap: 0.5rem;
+}

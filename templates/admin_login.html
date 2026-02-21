@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Login{% endblock %}
+
+{% block content %}
+<main class="container">
+  <section class="card section-block">
+    <h2>Вход в админку</h2>
+    {% if error %}
+      <p class="notice error">Неверный логин или пароль.</p>
+    {% endif %}
+
+    <form action="/login" method="post" class="form-block">
+      <label>
+        Username
+        <input type="text" name="username" required>
+      </label>
+      <label>
+        Password
+        <input type="password" name="password" required>
+      </label>
+      <button type="submit">Войти</button>
+    </form>
+  </section>
+</main>
+{% endblock %}

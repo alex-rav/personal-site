@@ -9,5 +9,65 @@
     <ul id="about_highlights"></ul>
     <p data-key="about_background"></p>
     <p data-key="about_growth"></p>
+
+    <section class="card section-block">
+      <h3>Отзывы</h3>
+      {% if review_sent %}
+        <p class="notice">Спасибо! Отзыв отправлен на модерацию.</p>
+      {% endif %}
+
+      {% if approved_reviews %}
+        <div class="review-list">
+          {% for review in approved_reviews %}
+            <article class="review-item">
+              <strong>{{ review.author_name }}</strong>
+              <span>★ {{ review.rating }}/5</span>
+              <p>{{ review.text }}</p>
+            </article>
+          {% endfor %}
+        </div>
+      {% else %}
+        <p>Пока нет опубликованных отзывов.</p>
+      {% endif %}
+
+      <form action="{{ url_for('submit_review') }}" method="post" class="form-block">
+        <label>
+          Имя
+          <input type="text" name="author_name" required>
+        </label>
+        <label>
+          Оценка (1-5)
+          <input type="number" name="rating" min="1" max="5" required>
+        </label>
+        <label>
+          Отзыв
+          <textarea name="text" rows="4" required></textarea>
+        </label>
+        <button type="submit">Отправить отзыв</button>
+      </form>
+    </section>
+
+    <section class="card section-block">
+      <h3>Связаться со мной</h3>
+      {% if message_sent %}
+        <p class="notice">Сообщение отправлено. Спасибо!</p>
+      {% endif %}
+
+      <form action="{{ url_for('send_message') }}" method="post" class="form-block">
+        <label>
+          Ваше имя
+          <input type="text" name="name" required>
+        </label>
+        <label>
+          Email
+          <input type="email" name="email" required>
+        </label>
+        <label>
+          Сообщение
+          <textarea name="message" rows="5" required></textarea>
+        </label>
+        <button type="submit">Отправить сообщение</button>
+      </form>
+    </section>
   </main>
 {% endblock %}
