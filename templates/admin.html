@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}Admin{% endblock %}
+
+{% block content %}
+<main class="container">
+  <section class="section-block">
+    <h2>Админ-панель</h2>
+    <p>Вы вошли как <strong>{{ user.username }}</strong>.</p>
+    <form action="{{ url_for('logout') }}" method="post">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+      <button type="submit">Выйти</button>
+    </form>
+  </section>
+
+  <section class="card section-block">
+    <h3>Отзывы на модерации</h3>
+    {% if pending_reviews %}
+      {% for review in pending_reviews %}
+        <article class="review-item">
+          <strong>{{ review.author_name }}</strong>
+          <span>★ {{ review.rating }}/5</span>
+          <p>{{ review.text }}</p>
+          <form action="{{ url_for('update_review_status', review_id=review.id) }}" method="post" class="inline-form">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+            <button type="submit" name="new_status" value="approved">Одобрить</button>
+            <button type="submit" name="new_status" value="rejected">Отклонить</button>
+          </form>
+        </article>
+      {% endfor %}
+    {% else %}
+      <p>Нет отзывов на модерации.</p>
+    {% endif %}
+  </section>
+
+  <section class="card section-block">
+    <h3>Сообщения обратной связи</h3>
+    {% if all_messages %}
+      {% for item in all_messages %}
+        <article class="review-item">
+          <strong>{{ item.name }}</strong> · <a href="mailto:{{ item.email }}">{{ item.email }}</a>
+          <p>{{ item.message }}</p>
+          <p>Статус: <strong>{{ item.status }}</strong></p>
+          {% if item.status != 'read' %}
+            <form action="{{ url_for('mark_message_read', message_id=item.id) }}" method="post" class="inline-form">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+              <button type="submit">Отметить как прочитанное</button>
+            </form>
+          {% endif %}
+        </article>
+      {% endfor %}
+    {% else %}
+      <p>Сообщений пока нет.</p>
+    {% endif %}
+  </section>
+</main>
+{% endblock %}
