@@ -9,8 +9,8 @@ from sqlalchemy.orm import Session
 from starlette import status
 from starlette.middleware.sessions import SessionMiddleware
 
-from app.auth import verify_password
-from app.database import Base, engine, get_db
+from app.auth import hash_password, verify_password
+from app.database import Base, SessionLocal, engine, get_db
 from app.models import Message, Review, User
 
 SECRET_KEY = os.getenv('SECRET_KEY')
@@ -28,6 +28,27 @@ app.add_middleware(SessionMiddleware, secret_key=SECRET_KEY)
 def ensure_tables_exist():
     # Безопасный fallback: если миграции не запускались, создаем базовые таблицы.
     Base.metadata.create_all(bind=engine)
+
+    # Создаем дефолтного админа для локального запуска, если его еще нет.
+    admin_username = os.getenv('ADMIN_USERNAME', 'admin')
+    admin_password = os.getenv('ADMIN_PASSWORD', 'admin123')
+
+    db = SessionLocal()
+    try:
+        existing_admin = db.query(User).filter(User.username == admin_username).first()
+        if not existing_admin:
+            db.add(
+                User(
+                    username=admin_username,
+                    hashed_password=hash_password(admin_password),
+                    is_admin=True,
+                )
+            )
+            db.commit()
+    except SQLAlchemyError:
+        db.rollback()
+    finally:
+        db.close()
 
 
 @app.get('/', name='index')
