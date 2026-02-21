@@ -17,3 +17,7 @@ uvicorn==0.40.0
 python-dotenv==1.0.1
 jinja2
 alembic
+passlib[bcrypt]
+bcrypt==3.2.2
+itsdangerous==2.2.0
+python-multipart==0.0.9

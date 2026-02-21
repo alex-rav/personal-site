@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block title %}Reviews{% endblock %}
+
+{% block content %}
+<main class="container">
+  <section class="card section-block">
+    <h2 data-key="reviews_page_title"></h2>
+    {% if review_sent %}
+      <p class="notice" data-key="reviews_notice_sent"></p>
+    {% endif %}
+    {% if review_error %}
+      <p class="notice error" data-key="reviews_notice_error"></p>
+    {% endif %}
+
+    {% if approved_reviews %}
+      <div class="review-list">
+        {% for review in approved_reviews %}
+          <article class="review-item">
+            <strong>{{ review.author_name }}</strong>
+            <span class="rating-view" style="--rating: {{ review.rating }}">★★★★★</span>
+            <p>{{ review.text }}</p>
+          </article>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p data-key="reviews_empty"></p>
+    {% endif %}
+  </section>
+
+  <section class="card section-block">
+    <h3 data-key="reviews_form_title"></h3>
+    <form action="{{ url_for('submit_review') }}" method="post" class="form-block">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+      <label>
+        <span data-key="reviews_form_name"></span>
+        <input type="text" name="author_name" required>
+      </label>
+
+      <div>
+        <p data-key="reviews_form_rating"></p>
+        <div class="rating-input" role="radiogroup" aria-label="Rating from 1 to 5">
+          <input type="radio" id="star5" name="rating" value="5" required>
+          <label for="star5" title="5">★</label>
+          <input type="radio" id="star4" name="rating" value="4">
+          <label for="star4" title="4">★</label>
+          <input type="radio" id="star3" name="rating" value="3">
+          <label for="star3" title="3">★</label>
+          <input type="radio" id="star2" name="rating" value="2">
+          <label for="star2" title="2">★</label>
+          <input type="radio" id="star1" name="rating" value="1">
+          <label for="star1" title="1">★</label>
+        </div>
+      </div>
+
+      <label>
+        <span data-key="reviews_form_text"></span>
+        <textarea name="text" rows="4" required></textarea>
+      </label>
+      <button type="submit" data-key="reviews_form_submit"></button>
+    </form>
+  </section>
+</main>
+{% endblock %}

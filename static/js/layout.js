@@ -32,7 +32,7 @@ async function loadContent() {
     projects.innerHTML = '';
     data.projects.forEach(p => {
       projects.innerHTML += `
-        <a class="card" href="project.html?id=${p.id}">
+        <a class="card" href="/projects/${p.id}">
           <h3>${p.title}</h3>
           <p>${p.desc}</p>
           <small>${p.stack}</small>
