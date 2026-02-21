@@ -56,5 +56,10 @@
     "Integration of web systems with industrial control environments"
   ],
   "about_background": "With a background in automation engineering, I understand how software interacts with physical processes. This allows me to design systems that are not only functional but also reliable in real production conditions.",
-  "about_growth": "I continuously improve my skills in scalable system design and infrastructure automation."
+  "about_growth": "I continuously improve my skills in scalable system design and infrastructure automation.",
+  "nav_home": "Home",
+  "nav_skills": "Skills",
+  "nav_projects": "Projects",
+  "nav_about": "About",
+  "nav_reviews": "Reviews"
 }
