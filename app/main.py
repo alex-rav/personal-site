@@ -4,6 +4,7 @@ from fastapi import Depends, FastAPI, Form, HTTPException, Request
 from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 from starlette import status
 from starlette.middleware.sessions import SessionMiddleware
@@ -45,12 +46,18 @@ def project_details(request: Request, project_id: str):
 
 @app.get('/about', name='about')
 def about(request: Request, db: Session = Depends(get_db)):
-    approved_reviews = (
-        db.query(Review)
-        .filter(Review.status == 'approved')
-        .order_by(Review.created_at.desc())
-        .all()
-    )
+    approved_reviews = []
+    try:
+        approved_reviews = (
+            db.query(Review)
+            .filter(Review.status == 'approved')
+            .order_by(Review.created_at.desc())
+            .all()
+        )
+    except SQLAlchemyError:
+        # Позволяем странице открыться даже если миграции еще не применены.
+        approved_reviews = []
+
     return templates.TemplateResponse(
         'about.html',
         {
