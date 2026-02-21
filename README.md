@@ -19,7 +19,11 @@
    ```bash
    docker compose up --build
    ```
-3. Открой сайт: `http://localhost:8000`
+3. Примени миграции:
+   ```bash
+   docker compose exec web alembic upgrade head
+   ```
+4. Открой сайт: `http://localhost:8000`
 
 ## 2) Локальный запуск (без Docker)
 1. Установи зависимости:
@@ -35,7 +39,21 @@
    ```bash
    alembic upgrade head
    ```
-4. Запусти приложение:
+4. Создай админа (один раз):
+   ```bash
+   python - <<'PY'
+   from app.database import SessionLocal
+   from app.models import User
+   from app.auth import hash_password
+
+   db = SessionLocal()
+   if not db.query(User).filter(User.username == 'admin').first():
+       db.add(User(username='admin', hashed_password=hash_password('CHANGE_ME'), is_admin=True))
+       db.commit()
+   db.close()
+   PY
+   ```
+5. Запусти приложение:
    ```bash
    uvicorn app.main:app --reload
    ```
@@ -45,12 +63,9 @@
   ```bash
   python -m compileall app alembic static/js
   ```
-- Smoke-import приложения:
+- Проверка health endpoint:
   ```bash
-  DATABASE_URL=sqlite:///./test.db SECRET_KEY=test-secret python - <<'PY'
-  from app.main import app
-  print(app.title)
-  PY
+  curl -s http://localhost:8000/healthz
   ```
 
 ## 4) Структура проекта
@@ -61,4 +76,6 @@
 
 ## 5) Примечания по безопасности
 - `SECRET_KEY` обязателен и не должен быть публичным.
+- Перед production обязательно поменяй пароль администратора и убери значения по умолчанию.
 - Значения в `docker-compose.yml` для Postgres подходят для локальной разработки, но не для production.
+- Для всех POST-форм используется CSRF-токен, но рекомендуется дополнительно настроить reverse-proxy rate limiting.

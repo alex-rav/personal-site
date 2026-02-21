@@ -8,6 +8,7 @@
     <h2>Админ-панель</h2>
     <p>Вы вошли как <strong>{{ user.username }}</strong>.</p>
     <form action="{{ url_for('logout') }}" method="post">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
       <button type="submit">Выйти</button>
     </form>
   </section>
@@ -21,6 +22,7 @@
           <span>★ {{ review.rating }}/5</span>
           <p>{{ review.text }}</p>
           <form action="{{ url_for('update_review_status', review_id=review.id) }}" method="post" class="inline-form">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
             <button type="submit" name="new_status" value="approved">Одобрить</button>
             <button type="submit" name="new_status" value="rejected">Отклонить</button>
           </form>
@@ -41,6 +43,7 @@
           <p>Статус: <strong>{{ item.status }}</strong></p>
           {% if item.status != 'read' %}
             <form action="{{ url_for('mark_message_read', message_id=item.id) }}" method="post" class="inline-form">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
               <button type="submit">Отметить как прочитанное</button>
             </form>
           {% endif %}

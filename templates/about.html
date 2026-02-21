@@ -37,6 +37,7 @@
         </div>
 
         <form action="{{ url_for('send_message') }}" method="post" class="form-block">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
           <label>
             Ваше имя
             <input type="text" name="name" required>

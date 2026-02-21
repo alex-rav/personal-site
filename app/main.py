@@ -1,16 +1,20 @@
 import os
+import time
+from datetime import datetime, timezone
+from collections import defaultdict, deque
 
 from fastapi import Depends, FastAPI, Form, HTTPException, Request
 from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+from sqlalchemy import text
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 from starlette import status
 from starlette.middleware.sessions import SessionMiddleware
 
-from app.auth import hash_password, verify_password
-from app.database import Base, SessionLocal, engine, get_db
+from app.auth import verify_password
+from app.database import engine, get_db
 from app.models import Message, Review, User
 
 SECRET_KEY = os.getenv('SECRET_KEY')
@@ -23,32 +27,53 @@ templates = Jinja2Templates(directory='templates')
 app.mount('/static', StaticFiles(directory='static'), name='static')
 app.add_middleware(SessionMiddleware, secret_key=SECRET_KEY)
 
+RATE_LIMITS = defaultdict(deque)
 
-@app.on_event('startup')
-def ensure_tables_exist():
-    # Безопасный fallback: если миграции не запускались, создаем базовые таблицы.
-    Base.metadata.create_all(bind=engine)
 
-    # Создаем дефолтного админа для локального запуска, если его еще нет.
-    admin_username = os.getenv('ADMIN_USERNAME', 'admin')
-    admin_password = os.getenv('ADMIN_PASSWORD', 'admin123')
+def get_client_ip(request: Request) -> str:
+    forwarded = request.headers.get('x-forwarded-for')
+    if forwarded:
+        return forwarded.split(',')[0].strip()
+    return request.client.host if request.client else 'unknown'
 
-    db = SessionLocal()
+
+def check_rate_limit(request: Request, scope: str, limit: int, window_seconds: int) -> None:
+    now = time.time()
+    key = f'{scope}:{get_client_ip(request)}'
+    bucket = RATE_LIMITS[key]
+
+    while bucket and now - bucket[0] > window_seconds:
+        bucket.popleft()
+
+    if len(bucket) >= limit:
+        raise HTTPException(status_code=429, detail='Too many requests. Try again later.')
+
+    bucket.append(now)
+
+
+def get_csrf_token(request: Request) -> str:
+    token = request.session.get('csrf_token')
+    if not token:
+        token = os.urandom(24).hex()
+        request.session['csrf_token'] = token
+    return token
+
+
+def verify_csrf(request: Request, csrf_token: str) -> None:
+    session_token = request.session.get('csrf_token')
+    if not session_token or csrf_token != session_token:
+        raise HTTPException(status_code=403, detail='Invalid CSRF token')
+
+
+@app.get('/healthz', name='healthz')
+def healthz():
     try:
-        existing_admin = db.query(User).filter(User.username == admin_username).first()
-        if not existing_admin:
-            db.add(
-                User(
-                    username=admin_username,
-                    hashed_password=hash_password(admin_password),
-                    is_admin=True,
-                )
-            )
-            db.commit()
+        with engine.connect() as connection:
+            connection.execute(text('SELECT 1'))
     except SQLAlchemyError:
-        db.rollback()
-    finally:
-        db.close()
+        raise HTTPException(status_code=503, detail='Database unavailable')
+
+    return {'status': 'ok'}
 
 
 @app.get('/', name='index')
@@ -77,6 +102,7 @@ def about(request: Request):
         'about.html',
         {
             'request': request,
+            'csrf_token': get_csrf_token(request),
             'message_sent': request.query_params.get('message_sent') == '1',
             'message_error': request.query_params.get('message_error') == '1',
         },
@@ -100,6 +126,7 @@ def reviews_page(request: Request, db: Session = Depends(get_db)):
         'reviews.html',
         {
             'request': request,
+            'csrf_token': get_csrf_token(request),
             'approved_reviews': approved_reviews,
             'review_sent': request.query_params.get('review_sent') == '1',
             'review_error': request.query_params.get('review_error') == '1',
@@ -109,16 +136,21 @@ def reviews_page(request: Request, db: Session = Depends(get_db)):
 
 @app.post('/reviews', name='submit_review')
 def submit_review(
+    request: Request,
+    csrf_token: str = Form(...),
     author_name: str = Form(...),
     text: str = Form(...),
     rating: int = Form(...),
     db: Session = Depends(get_db),
 ):
+    verify_csrf(request, csrf_token)
+    check_rate_limit(request, 'submit_review', limit=10, window_seconds=60)
+
     if rating < 1 or rating > 5:
         raise HTTPException(status_code=400, detail='Rating must be between 1 and 5')
 
     try:
-        db.add(Review(author_name=author_name.strip(), text=text.strip(), rating=rating, status='pending'))
+        db.add(Review(author_name=author_name.strip(), text=text.strip(), rating=rating, status='pending', created_at=datetime.now(timezone.utc)))
         db.commit()
     except SQLAlchemyError:
         db.rollback()
@@ -129,13 +161,18 @@ def submit_review(
 
 @app.post('/messages', name='send_message')
 def send_message(
+    request: Request,
+    csrf_token: str = Form(...),
     name: str = Form(...),
     email: str = Form(...),
     message: str = Form(...),
     db: Session = Depends(get_db),
 ):
+    verify_csrf(request, csrf_token)
+    check_rate_limit(request, 'send_message', limit=10, window_seconds=60)
+
     try:
-        db.add(Message(name=name.strip(), email=email.strip(), message=message.strip(), status='new'))
+        db.add(Message(name=name.strip(), email=email.strip(), message=message.strip(), status='new', created_at=datetime.now(timezone.utc)))
         db.commit()
     except SQLAlchemyError:
         db.rollback()
@@ -148,17 +185,26 @@ def send_message(
 def admin_login_page(request: Request):
     return templates.TemplateResponse(
         'admin_login.html',
-        {'request': request, 'error': request.query_params.get('error') == '1', 'db_error': request.query_params.get('db_error') == '1'},
+        {
+            'request': request,
+            'csrf_token': get_csrf_token(request),
+            'error': request.query_params.get('error') == '1',
+            'db_error': request.query_params.get('db_error') == '1',
+        },
     )
 
 
 @app.post('/login')
 def login(
     request: Request,
+    csrf_token: str = Form(...),
     username: str = Form(...),
     password: str = Form(...),
     db: Session = Depends(get_db),
 ):
+    verify_csrf(request, csrf_token)
+    check_rate_limit(request, 'login', limit=8, window_seconds=60)
+
     try:
         user = db.query(User).filter(User.username == username).first()
     except SQLAlchemyError:
@@ -172,7 +218,8 @@ def login(
 
 
 @app.post('/logout', name='logout')
-def logout(request: Request):
+def logout(request: Request, csrf_token: str = Form(...)):
+    verify_csrf(request, csrf_token)
     request.session.clear()
     return RedirectResponse('/', status_code=status.HTTP_303_SEE_OTHER)
 
@@ -213,6 +260,7 @@ def admin_dashboard(
         'admin.html',
         {
             'request': request,
+            'csrf_token': get_csrf_token(request),
             'pending_reviews': pending_reviews,
             'all_messages': all_messages,
             'user': user,
@@ -222,11 +270,14 @@ def admin_dashboard(
 
 @app.post('/admin/reviews/{review_id}/status', name='update_review_status')
 def update_review_status(
+    request: Request,
     review_id: int,
+    csrf_token: str = Form(...),
     new_status: str = Form(...),
     user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
+    verify_csrf(request, csrf_token)
     if not user.is_admin:
         raise HTTPException(status_code=403)
 
@@ -245,10 +296,13 @@ def update_review_status(
 
 @app.post('/admin/messages/{message_id}/read', name='mark_message_read')
 def mark_message_read(
+    request: Request,
     message_id: int,
+    csrf_token: str = Form(...),
     user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
+    verify_csrf(request, csrf_token)
     if not user.is_admin:
         raise HTTPException(status_code=403)
 

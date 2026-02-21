@@ -31,6 +31,7 @@
   <section class="card section-block">
     <h3>Оставить отзыв</h3>
     <form action="{{ url_for('submit_review') }}" method="post" class="form-block">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
       <label>
         Имя
         <input type="text" name="author_name" required>
