@@ -11,17 +11,14 @@
     <p data-key="about_growth"></p>
 
     <section class="card section-block">
-      <h3>Отзывы</h3>
-      <p>Отзывы и форма отправки перенесены на отдельную страницу.</p>
-      <a class="button-link" href="{{ url_for('reviews_page') }}">Открыть страницу отзывов</a>
-    </section>
-
-    <section class="card section-block">
       <details class="contact-disclosure" {% if message_sent %}open{% endif %}>
         <summary>Связаться со мной</summary>
 
         {% if message_sent %}
           <p class="notice">Сообщение отправлено. Спасибо!</p>
+        {% endif %}
+        {% if message_error %}
+          <p class="notice error">Не удалось отправить сообщение. Проверь, что миграции БД применены.</p>
         {% endif %}
 
         <div class="contact-actions">

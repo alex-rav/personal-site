@@ -9,6 +9,9 @@
     {% if review_sent %}
       <p class="notice">Спасибо! Отзыв отправлен на модерацию.</p>
     {% endif %}
+    {% if review_error %}
+      <p class="notice error">Не удалось отправить/получить отзывы. Проверь, что миграции БД применены.</p>
+    {% endif %}
 
     {% if approved_reviews %}
       <div class="review-list">

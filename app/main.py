@@ -51,6 +51,7 @@ def about(request: Request):
         {
             'request': request,
             'message_sent': request.query_params.get('message_sent') == '1',
+            'message_error': request.query_params.get('message_error') == '1',
         },
     )
 
@@ -74,6 +75,7 @@ def reviews_page(request: Request, db: Session = Depends(get_db)):
             'request': request,
             'approved_reviews': approved_reviews,
             'review_sent': request.query_params.get('review_sent') == '1',
+            'review_error': request.query_params.get('review_error') == '1',
         },
     )
 
@@ -88,8 +90,12 @@ def submit_review(
     if rating < 1 or rating > 5:
         raise HTTPException(status_code=400, detail='Rating must be between 1 and 5')
 
-    db.add(Review(author_name=author_name.strip(), text=text.strip(), rating=rating, status='pending'))
-    db.commit()
+    try:
+        db.add(Review(author_name=author_name.strip(), text=text.strip(), rating=rating, status='pending'))
+        db.commit()
+    except SQLAlchemyError:
+        db.rollback()
+        return RedirectResponse(url='/reviews?review_error=1', status_code=status.HTTP_303_SEE_OTHER)
 
     return RedirectResponse(url='/reviews?review_sent=1', status_code=status.HTTP_303_SEE_OTHER)
 
@@ -101,8 +107,12 @@ def send_message(
     message: str = Form(...),
     db: Session = Depends(get_db),
 ):
-    db.add(Message(name=name.strip(), email=email.strip(), message=message.strip(), status='new'))
-    db.commit()
+    try:
+        db.add(Message(name=name.strip(), email=email.strip(), message=message.strip(), status='new'))
+        db.commit()
+    except SQLAlchemyError:
+        db.rollback()
+        return RedirectResponse(url='/about?message_error=1', status_code=status.HTTP_303_SEE_OTHER)
 
     return RedirectResponse(url='/about?message_sent=1', status_code=status.HTTP_303_SEE_OTHER)
 
