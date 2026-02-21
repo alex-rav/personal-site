@@ -20,8 +20,8 @@
       "stack": "Node.js, Telegram API"
     }
   ],
-  "about_title": "About me",
-  "about_intro": "Automation engineer with hands-on experience in PLC, IT and industrial systems.",
+  "about_title": "About Me",
+  "about_intro": "I am a full-stack engineer with a strong backend focus, working primarily with Python and modern web technologies.",
   "about_skills_title": "Key skills",
   "skills_backend_title": "Backend",
   "skills_backend": [
@@ -49,8 +49,6 @@
     "• SCADA systems",
     "• Production process monitoring"
   ],
-  "about_title": "About Me",
-  "about_intro": "I am a full-stack engineer with a strong backend focus, working primarily with Python and modern web technologies.",
   "about_highlights": [
     "REST API design and implementation",
     "Database architecture and optimization",
@@ -60,4 +58,3 @@
   "about_background": "With a background in automation engineering, I understand how software interacts with physical processes. This allows me to design systems that are not only functional but also reliable in real production conditions.",
   "about_growth": "I continuously improve my skills in scalable system design and infrastructure automation."
 }
-
