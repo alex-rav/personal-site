@@ -5,12 +5,12 @@
 {% block content %}
 <main class="container">
   <section class="card section-block">
-    <h2>Отзывы</h2>
+    <h2 data-key="reviews_page_title"></h2>
     {% if review_sent %}
-      <p class="notice">Спасибо! Отзыв отправлен на модерацию.</p>
+      <p class="notice" data-key="reviews_notice_sent"></p>
     {% endif %}
     {% if review_error %}
-      <p class="notice error">Не удалось отправить/получить отзывы. Проверь, что миграции БД применены.</p>
+      <p class="notice error" data-key="reviews_notice_error"></p>
     {% endif %}
 
     {% if approved_reviews %}
@@ -24,22 +24,22 @@
         {% endfor %}
       </div>
     {% else %}
-      <p>Пока нет опубликованных отзывов.</p>
+      <p data-key="reviews_empty"></p>
     {% endif %}
   </section>
 
   <section class="card section-block">
-    <h3>Оставить отзыв</h3>
+    <h3 data-key="reviews_form_title"></h3>
     <form action="{{ url_for('submit_review') }}" method="post" class="form-block">
       <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
       <label>
-        Имя
+        <span data-key="reviews_form_name"></span>
         <input type="text" name="author_name" required>
       </label>
 
       <div>
-        <p>Оценка</p>
-        <div class="rating-input" role="radiogroup" aria-label="Оценка от 1 до 5">
+        <p data-key="reviews_form_rating"></p>
+        <div class="rating-input" role="radiogroup" aria-label="Rating from 1 to 5">
           <input type="radio" id="star5" name="rating" value="5" required>
           <label for="star5" title="5">★</label>
           <input type="radio" id="star4" name="rating" value="4">
@@ -54,10 +54,10 @@
       </div>
 
       <label>
-        Отзыв
+        <span data-key="reviews_form_text"></span>
         <textarea name="text" rows="4" required></textarea>
       </label>
-      <button type="submit">Отправить отзыв</button>
+      <button type="submit" data-key="reviews_form_submit"></button>
     </form>
   </section>
 </main>
