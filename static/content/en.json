@@ -80,5 +80,11 @@
   "contact_form_name": "Your name",
   "contact_form_email": "Email",
   "contact_form_message": "Message",
-  "contact_form_submit": "Send message"
+  "contact_form_submit": "Send message",
+  "reviews_rating_group_aria": "Rating from 1 to 5",
+  "reviews_rating_star_5_title": "5",
+  "reviews_rating_star_4_title": "4",
+  "reviews_rating_star_3_title": "3",
+  "reviews_rating_star_2_title": "2",
+  "reviews_rating_star_1_title": "1"
 }

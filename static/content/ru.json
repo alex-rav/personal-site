@@ -80,5 +80,11 @@
   "contact_form_name": "Ваше имя",
   "contact_form_email": "Email",
   "contact_form_message": "Сообщение",
-  "contact_form_submit": "Отправить сообщение"
+  "contact_form_submit": "Отправить сообщение",
+  "reviews_rating_group_aria": "Оценка от 1 до 5",
+  "reviews_rating_star_5_title": "5",
+  "reviews_rating_star_4_title": "4",
+  "reviews_rating_star_3_title": "3",
+  "reviews_rating_star_2_title": "2",
+  "reviews_rating_star_1_title": "1"
 }

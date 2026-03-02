@@ -8,6 +8,22 @@ async function loadContent() {
     const key = el.dataset.key;
     if (data[key]) el.textContent = data[key];
   });
+
+  document.querySelectorAll('[data-aria-label-key]').forEach(el => {
+    const key = el.dataset.ariaLabelKey;
+    if (data[key]) el.setAttribute('aria-label', data[key]);
+  });
+
+  document.querySelectorAll('[data-placeholder-key]').forEach(el => {
+    const key = el.dataset.placeholderKey;
+    if (data[key]) el.setAttribute('placeholder', data[key]);
+  });
+
+
+  document.querySelectorAll('[data-title-key]').forEach(el => {
+    const key = el.dataset.titleKey;
+    if (data[key]) el.setAttribute('title', data[key]);
+  });
   
   renderList('skills_backend', data.skills_backend);
   renderList('skills_frontend', data.skills_frontend);
